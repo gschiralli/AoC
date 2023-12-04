@@ -1,1 +1,7 @@
-console.log("Advent Of Code 2023!");
+import solve01 from "../src/01/index.js";
+
+function solveAll() {
+  solve01();
+}
+
+solveAll();
