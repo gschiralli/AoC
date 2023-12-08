@@ -1,6 +1,6 @@
 import { input } from "./input.js";
 
-function solve() {
+export default function () {
   const lines = input.split("\n");
   let part1 = 0;
   let part2 = 0;
@@ -22,9 +22,7 @@ function solve() {
     }
   });
   part2 = cardInstances.reduce((acc, v) => acc + v, 0);
-
-  console.log(part1);
-  console.log(part2);
+  console.log("--- Day 04 ---");
+  console.log("Part One: " + part1);
+  console.log("Part two: " + part2);
 }
-
-solve();
