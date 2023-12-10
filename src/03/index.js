@@ -1,84 +1,78 @@
 import { input } from "./input.js";
 
-function checkAdj(matrix, i, j) {
-  const regExp = new RegExp(/[\d\.]/);
+const contents = input
+  .split("\n")
+  .map((x) => x.split(""))
+  .filter((x) => x.length > 0);
 
-  if (!regExp.test(matrix[i][0].charAt(j))) {
-    return true;
+function isCharNumber(char) {
+  return !isNaN(parseInt(char));
+}
+
+function isDot(char) {
+  return char === ".";
+}
+
+const dirs = [
+  [-1, -1],
+  [0, -1],
+  [1, -1],
+  [-1, 0],
+  [1, 0],
+  [-1, 1],
+  [0, 1],
+  [1, 1],
+];
+function get(i, j, [y, x]) {
+  const chars = contents[i + y];
+  if (chars === undefined) {
+    return undefined;
   }
-  //check left
-  if (j !== 0) {
-    if (!regExp.test(matrix[i][0].charAt(j - 1))) {
-      return true;
+  return chars[j + x];
+}
+
+let sum = 0;
+
+for (let y = 0; y < contents.length; ++y) {
+  const row = contents[y];
+  let isNumber = false;
+  let currentNum = "";
+  let check = true;
+
+  for (let x = 0; x < row.length; ++x) {
+    isNumber = isCharNumber(get(y, x, [0, 0]));
+
+    if (!isNumber && !check) {
+      console.log(currentNum);
+      sum += parseInt(currentNum);
     }
-  }
-  //check right
-  if (j !== matrix[i][0].length - 1) {
-    if (!regExp.test(matrix[i][0].charAt(j + 1))) {
-      return true;
+
+    if (!isNumber) {
+      currentNum = "";
+      check = true;
     }
-  }
-  //check top
-  if (i !== 0) {
-    if (!regExp.test(matrix[i - 1][0].charAt(j))) {
-      return true;
-    }
-    //check diagonally top right
-    if (j !== matrix[i][0].length - 1) {
-      if (!regExp.test(matrix[i - 1][0].charAt(j + 1))) {
-        return true;
+
+    if (isNumber && check) {
+      const is = dirs.reduce((acc, [dy, dx]) => {
+        const char = get(y, x, [dy, dx]);
+
+        return (
+          acc || (!isDot(char) && !isCharNumber(char) && char !== undefined)
+        );
+      }, false);
+
+      if (is) {
+        check = false;
       }
     }
-    //check diagonally top left
-    if (j !== 0) {
-      if (!regExp.test(matrix[i - 1][0].charAt(j - 1))) {
-        return true;
-      }
+    if (isNumber) {
+      currentNum += get(y, x, [0, 0]);
     }
   }
-  //check bottom
-  if (i !== matrix.length - 1) {
-    if (!regExp.test(matrix[i + 1][0].charAt(j))) {
-      return true;
-    }
-    //check diagonally bottom right
-    if (j !== matrix[i][0].length - 1) {
-      if (!regExp.test(matrix[i + 1][0].charAt(j + 1))) {
-        return true;
-      }
-    }
-    //check diagonally bottom left
-    if (j !== 0) {
-      if (!regExp.test(matrix[i + 1][0].charAt(j - 1))) {
-        return true;
-      }
-    }
+  if (isNumber && !check) {
+    console.log("currentNum", currentNum);
+    sum += parseInt(currentNum);
   }
 }
 
-export default function () {
-  const lines = input.split("\n");
-  let ans = 0;
-  const matrix = lines.map((line) => {
-    return [line.trim()];
-  });
-
-  const digitRegex = /\d/;
-
-  for (let i = 0; i < matrix.length; i++) {
-    let digit = "";
-    for (let j = 0; j < matrix[i][0].length; j++) {
-      if (digitRegex.test(matrix[i][0].charAt(j))) {
-        digit += matrix[i][0].charAt(j);
-      } else if (digit) {
-        for (let start = j - digit.length; start < j; start++) {
-          if (checkAdj(matrix, i, start)) {
-            ans += Number(digit);
-            break;
-          }
-        }
-        digit = "";
-      }
-    }
-  }
-}
+console.log(sum);
