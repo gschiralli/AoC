@@ -54,6 +54,5 @@ export default function () {
       return red * green * blue;
     })
     .reduce((s, result) => s + result, 0);
-
-  console.log(`solution: ${res}`);
+  console.log("Solution: ", res);
 }
